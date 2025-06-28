@@ -118,7 +118,7 @@ else:
     47;0.01;0.0047;0.0027
     '''
         from io import StringIO
-        return pd.read_csv(StringIO(datos), sep=';', header=0)
+        df = pd.read_csv(StringIO(datos), sep=';')
         st.write("DataFrame columns:", df.columns.tolist())  # Debug output
         return df
 
@@ -126,7 +126,7 @@ else:
 
     # Inputs
     if 'Edad' in df.columns:
-        edad = st.selectbox("Age", df['Edad'].tolist())
+        edad = st.selectbox("Age", df[' Edad'].tolist())
     else:
         st.error(f"Column 'Edad' not found. Available columns: {df.columns.tolist()}")
         st.stop()
