@@ -152,6 +152,11 @@ st.markdown(
         background: #0056A7 !important; /* Match app theme */
         border-radius: 3px !important;
     }
+    /* Specifically target the labels for Age and blastocyst inputs */
+    div[data-testid="stSelectbox"] label,
+    div[data-testid="stNumberInput"] label {
+        color: #000000 !important;
+    }
     </style>
 
     """,
