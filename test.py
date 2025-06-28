@@ -126,154 +126,92 @@ if not st.session_state.logged_in:
             st.rerun()
 
 # Main app
-else:
-    st.markdown("<h1 style='text-align: center;'>Vitrification Viability via Osmotic Response</h1>", 
-                unsafe_allow_html=True)
+else:   
+    # Logo de Fertilab más pequeño y centrado
+    st.markdown(
+        """
+        <div style="text-align: center; margin-bottom: 0.5rem;">
+            <a href="https://www.fertilab.com" target="_blank">
+                <img src="https://fertilab.com/wp-content/uploads/2020/03/logo-fertilab-barcelona-oficial-2019.jpg" width="180">
+            </a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    # Load and preprocess data
-    df = pd.read_csv("AioocyteV1.csv", sep=";")
-    for col in df.columns:
-        if df[col].dtype == "object":
-            df[col] = df[col].str.replace("%", "").str.replace(",", ".", regex=False)
-            df[col] = pd.to_numeric(df[col], errors="coerce")
+    # Título más compacto
+    st.markdown(
+        "<h2 style='text-align: center; margin-bottom: 1rem;'>At Least One Euploid Calculator</h2>",
+        unsafe_allow_html=True
+    )
 
-    # Placeholders for dynamic content
-    video_placeholder = st.empty()
-    survival_placeholder = st.empty()
-    metrics_placeholder = st.empty()
-    grafico_placeholder = st.empty()
-    slider_placeholder = st.empty()
-    controls_placeholder = st.empty()
-    logo_placeholder = st.empty()
+    # Cargar datos desde string
+    @st.cache_data
+    def cargar_datos():
+        datos = '''
+    Edad;A;B;C
+    18;0.7812;0.6273;0.4868
+    19;0.7723;0.6153;0.474
+    20;0.7648;0.6052;0.4635
+    21;0.7584;0.5968;0.4548
+    22;0.7531;0.5898;0.4476
+    23;0.7485;0.5838;0.4415
+    24;0.7444;0.5786;0.4362
+    25;0.7406;0.5737;0.4313
+    26;0.7367;0.5688;0.4265
+    27;0.7326;0.5636;0.4213
+    28;0.7278;0.5576;0.4154
+    29;0.7221;0.5506;0.4085
+    30;0.7152;0.5421;0.4002
+    31;0.7066;0.5317;0.3902
+    32;0.6961;0.5192;0.3783
+    33;0.6831;0.504;0.3642
+    34;0.6666;0.4852;0.3469
+    35;0.6449;0.4613;0.3255
+    36;0.6162;0.4308;0.299
+    37;0.5782;0.3926;0.267
+    38;0.5292;0.3464;0.23
+    39;0.4678;0.293;0.1894
+    40;0.3944;0.2349;0.1475
+    41;0.3123;0.1763;0.1077
+    42;0.2284;0.1224;0.0729
+    43;0.1519;0.0779;0.0454
+    44;0.0909;0.045;0.0259
+    45;0.0487;0.0236;0.0134
+    46;0.0233;0.0111;0.0063
+    47;0.01;0.0047;0.0027
+    '''
+        from io import StringIO
+        return pd.read_csv(StringIO(datos), sep=';')
 
-    def mostrar_contenido():
-        frame_path = f"frames/frame_{st.session_state.second}.jpg"
-        with video_placeholder:
-            if os.path.exists(frame_path):
-                image = Image.open(frame_path)
-                st.image(image, caption=f"Frame {st.session_state.second}", use_container_width=True)
-            else:
-                st.caption("Image not found.")
+    df = cargar_datos()
 
-        dato = df.iloc[int(st.session_state.second)]
-        with survival_placeholder:
-            st.markdown(
-                f"""
-                <div style='text-align: center;'>
-                    <div class='survival-text' style='font-weight: bold; color: #003087'>
-                        {dato['Survival']:.1f}%
-                    </div>
-                    <div class='survival-caption' style='color: #555'>Probability of oocyte survival after vitrification</div>
-                </div>
-                <hr style='margin: 0.5rem 0;'>
-                """,
-                unsafe_allow_html=True,
-            )
+    # Inputs
+    edad = st.selectbox("Age", df['Edad'].tolist())
+    nA = st.number_input("Grade A blastocysts", min_value=0, step=1)
+    nB = st.number_input("Grade B blastocysts", min_value=0, step=1)
+    nC = st.number_input("Grade C blastocysts", min_value=0, step=1)
 
-        with metrics_placeholder:
-            st.markdown(
-                f"""
-                <div class='metrics-container'>
-                    <div class='metric-item'>
-                        <div class='metric-label' style='color:#003087;'>Area</div>
-                        <div class='metric-value' style='font-weight: bold; color:#333'>{dato['Area%']:.3f}%</div>
-                    </div>
-                    <div class='metric-item'>
-                        <div class='metric-label' style='color:#003087;'>Circularity</div>
-                        <div class='metric-value' style='font-weight: bold; color:#333'>{dato['Circularity']:.3f}</div>
-                    </div>
-                    <div class='metric-item'>
-                        <div class='metric-label' style='color:#003087;'>Dehydration</div>
-                        <div class='metric-value' style='font-weight: bold; color:#333'>{dato['Vdeshidratacion']:.2f}%/s</div>
-                    </div>
-                    <div class='metric-item'>
-                        <div class='metric-item'>
-                        <div class='metric-label' style='color:#003087'>Deplasmolysis</div>
-                        <div class='metric-value' style='font-weight: bold; color:#333'>{dato['Vdeplasmolisi']:.2f}%/s</div>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+    # Calcular probabilidad
+    fila = df[df['Edad'] == edad].iloc[0]
+    pA, pB, pC = fila['A'], fila['B'], fila['C']
+    prob = 1 - (1 - pA)**nA * (1 - pB)**nB * (1 - pC)**nC
 
-        with grafico_placeholder:
-            st.image("slider_background_final.png", use_container_width=True)
+    # Resultado centrado y compacto
+    st.markdown(
+        f"""
+        <div style="text-align: center; margin-top: 1rem;">
+            <div style="font-size: 40px; font-weight: bold; color: black;">
+                {prob:.1%}
+            </div>
+            <div style="font-size: 14px; font-weight: 300; color: black;">
+                Probability of at least one euploid blastocyst
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    def render_slider():
-        with slider_placeholder:
-            selected = st.slider("🕒", 0, 359, value=int(st.session_state.second), label_visibility="collapsed")
-            if selected != st.session_state.second:
-                st.session_state.second = selected
-                st.session_state.playing = False
-                mostrar_contenido()
-                mostrar_logo()
-
-    def mostrar_logo():
-        with logo_placeholder:
-            st.markdown(
-                """
-                <div style='text-align: center; margin-top: 1rem;'>
-                    <a href='https://www.fertilab.com' target='_blank'>
-                        <img src='https://redinfertiles.com/wp-content/uploads/2022/04/logo-Barcelona.png' 
-                             alt='Fertilab Barcelona' width='200'/>
-                    </a>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-    # Initial render
-    mostrar_contenido()
-    render_slider()
-    mostrar_logo()
-
-    # Control buttons
-    with controls_placeholder:
-        col1, col2, col3, col4, col5, col6 = st.columns(6)
-        with col1:
-            if st.button("⏪ Back"):
-                st.session_state.second = max(0, st.session_state.second - 1)
-                st.session_state.playing = False
-                mostrar_contenido()
-                render_slider()
-                mostrar_logo()
-        with col2:
-            if st.button("▶️ Play 1x"):
-                st.session_state.playing = True
-                st.session_state.speed = 1
-        with col3:
-            if st.button("⏩ Forward"):
-                st.session_state.second = min(359, st.session_state.second + 1)
-                st.session_state.playing = False
-                mostrar_contenido()
-                render_slider()
-                mostrar_logo()
-        with col4:
-            if st.button("⏸️ Pause"):
-                st.session_state.playing = False
-        with col5:
-            if st.button("⏹️ Stop"):
-                st.session_state.playing = False
-                st.session_state.second = 0
-                mostrar_contenido()
-                render_slider()
-                mostrar_logo()
-        with col6:
-            if st.button("⏩ Play 5x"):
-                st.session_state.playing = True
-                st.session_state.speed = 5
-
-    # Playback loop
-    if st.session_state.playing:
-        for _ in range(500):
-            if not st.session_state.playing or st.session_state.second >= 359:
-                st.session_state.playing = False
-                break
-            time.sleep(0.3)  # Slightly faster for smoother playback
-            st.session_state.second = min(359, st.session_state.second + st.session_state.speed)
-            mostrar_contenido()
-            render_slider()
-            mostrar_logo()
 
     # Logout button
     if st.button("Log out"):
