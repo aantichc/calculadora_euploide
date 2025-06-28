@@ -63,6 +63,7 @@ if not st.session_state.logged_in:
 
 # Main app
 else:
+    
     # Logo de Fertilab más pequeño y centrado
     st.markdown(
         """
@@ -118,25 +119,18 @@ else:
     47;0.01;0.0047;0.0027
     '''
         from io import StringIO
-        df = pd.read_csv(StringIO(datos), sep=';')
-        df.columns = df.columns.str.strip()  # Remove leading/trailing spaces
-        return df
+        return pd.read_csv(StringIO(datos), sep=';')
 
     df = cargar_datos()
 
     # Inputs
-    if ' Edad' in df.columns:
-        edad = st.selectbox("Age", df[' Edad'].tolist())
-    else:
-        st.error(f"Column 'Edad' not found. Available columns: {df.columns.tolist()}")
-        st.stop()
-
+    edad = st.selectbox("Age", df['Edad'].tolist())
     nA = st.number_input("Grade A blastocysts", min_value=0, step=1)
     nB = st.number_input("Grade B blastocysts", min_value=0, step=1)
     nC = st.number_input("Grade C blastocysts", min_value=0, step=1)
 
     # Calcular probabilidad
-    fila = df[df[' Edad'] == edad].iloc[0]
+    fila = df[df['Edad'] == edad].iloc[0]
     pA, pB, pC = fila['A'], fila['B'], fila['C']
     prob = 1 - (1 - pA)**nA * (1 - pB)**nB * (1 - pC)**nC
 
@@ -154,4 +148,5 @@ else:
         """,
         unsafe_allow_html=True
     )
+
 
