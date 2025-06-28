@@ -78,6 +78,24 @@ st.markdown(
     .stApp {
         background-color: #ffffff !important;
     }
+    /* Brighten button text */
+    .stButton > button {
+        color: #ffffff !important; /* Bright white text */
+        background-color: #005EA8 !important; /* Contrasting background */
+        font-weight: bold !important;
+        font-size: calc(0.7rem + 0.4vw) !important; /* Tighter button text scaling */
+    }
+    /* Ensure button text remains bright on hover */
+    .stButton > button:hover {
+        color: #ffffff !important;
+        background-color: #004080 !important;
+    }
+    /* Make main app title dark and scalable */
+    h1 {
+        color: #222222 !important;
+        font-size: calc(1.2rem + 1.5vw) !important; /* Tighter title scaling */
+        line-height: 1.2 !important;
+    }
     /* Make login page header dark and scalable */
     h2, .stMarkdown h2 {
         color: #222222 !important;
@@ -87,6 +105,52 @@ st.markdown(
     .stMarkdown p, .stText {
         color: #222222 !important;
         font-size: calc(0.6rem + 0.6vw) !important; /* Tighter write text scaling */
+    }
+    /* Scale survival probability text */
+    .survival-text {
+        font-size: calc(1.4rem + 2vw) !important; /* Tighter survival % scaling */
+    }
+    .survival-caption {
+        font-size: calc(0.6rem + 0.5vw) !important; /* Tighter caption scaling */
+    }
+    /* Scale metrics text */
+    .metric-label {
+        font-size: calc(0.5rem + 0.4vw) !important; /* Smaller metric labels */
+        white-space: nowrap !important; /* Prevent label wrapping */
+        overflow: hidden !important;
+        text-overflow: visible !important; /* Allow full text to show */
+    }
+    .metric-value {
+        font-size: calc(0.7rem + 0.6vw) !important; /* Smaller metric values */
+        min-height: 1.5rem !important; /* Consistent height for alignment */
+    }
+    /* Custom flexbox for metrics to stay horizontal */
+    .metrics-container {
+        display: flex !important;
+        flex-wrap: nowrap !important; /* Prevent wrapping */
+        overflow-x: auto !important; /* Horizontal scrollbar */
+        width: 100% !important;
+        gap: 0.1rem !important; /* Reduced spacing between metrics */
+    }
+    .metric-item {
+        flex: 1 !important; /* Equal width distribution */
+        min-width: 90px !important; /* Reduced min-width for tighter fit */
+        text-align: center !important;
+        padding: 0.1rem !important; /* Reduced padding */
+        box-sizing: border-box !important;
+    }
+    /* Ensure container width adapts */
+    .main .block-container {
+        max-width: 100% !important;
+        padding: 0.5rem !important; /* Tighter padding */
+    }
+    /* Optional: scrollbar styling */
+    .metrics-container::-webkit-scrollbar {
+        height: 6px !important; /* Thinner scrollbar */
+    }
+    .metrics-container::-webkit-scrollbar-thumb {
+        background: #0056A7 !important; /* Match app theme */
+        border-radius: 3px !important;
     }
     </style>
 
