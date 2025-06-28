@@ -61,7 +61,27 @@ if not st.session_state.logged_in:
             time.sleep(0.5)  # Reduced delay
             st.rerun()
 
-# Cargar datos desde string
+# Main app
+else:
+    # Logo de Fertilab más pequeño y centrado
+    st.markdown(
+        """
+        <div style="text-align: center; margin-bottom: 0.5rem;">
+            <a href="https://www.fertilab.com" target="_blank">
+                <img src="https://fertilab.com/wp-content/uploads/2020/03/logo-fertilab-barcelona-oficial-2019.jpg" width="180">
+            </a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Título más compacto
+    st.markdown(
+        "<h2 style='text-align: center; margin-bottom: 1rem;'>At Least One Euploid Calculator</h2>",
+        unsafe_allow_html=True
+    )
+
+    # Cargar datos desde string
     @st.cache_data
     def cargar_datos():
         datos = '''
@@ -98,34 +118,19 @@ if not st.session_state.logged_in:
     47;0.01;0.0047;0.0027
     '''
         from io import StringIO
-        return pd.read_csv(StringIO(datos), sep=';')
+        return pd.read_csv(StringIO(datos), sep=';', header=0)
+        st.write("DataFrame columns:", df.columns.tolist())  # Debug output
+        return df
 
     df = cargar_datos()
 
-# Main app
-else:
-    # Logo de Fertilab más pequeño y centrado
-    st.markdown(
-        """
-        <div style="text-align: center; margin-bottom: 0.5rem;">
-            <a href="https://www.fertilab.com" target="_blank">
-                <img src="https://fertilab.com/wp-content/uploads/2020/03/logo-fertilab-barcelona-oficial-2019.jpg" width="180">
-            </a>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Título más compacto
-    st.markdown(
-        "<h2 style='text-align: center; margin-bottom: 1rem;'>At Least One Euploid Calculator</h2>",
-        unsafe_allow_html=True
-    )
-
-    
-
     # Inputs
-    edad = st.selectbox("Age", df['Edad'].tolist())
+    if 'Edad' in df.columns:
+        edad = st.selectbox("Age", df['Edad'].tolist())
+    else:
+        st.error(f"Column 'Edad' not found. Available columns: {df.columns.tolist()}")
+        st.stop()
+
     nA = st.number_input("Grade A blastocysts", min_value=0, step=1)
     nB = st.number_input("Grade B blastocysts", min_value=0, step=1)
     nC = st.number_input("Grade C blastocysts", min_value=0, step=1)
