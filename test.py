@@ -115,7 +115,7 @@ st.markdown(
 )
 
 # Login page
-if not st_session_state.logged_in:
+if not st.session_state.logged_in:
     st.title("Vitrification Viability via Osmotic Response Calculator")
     if st.button("Log in / Sign up"):
         st.login("auth0")
