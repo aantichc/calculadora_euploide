@@ -119,13 +119,13 @@ else:
     '''
         from io import StringIO
         df = pd.read_csv(StringIO(datos), sep=';')
-        st.write("DataFrame columns:", df.columns.tolist())  # Debug output
+        df.columns = df.columns.str.strip()  # Remove leading/trailing spaces
         return df
 
     df = cargar_datos()
 
     # Inputs
-    if 'Edad' in df.columns:
+    if ' Edad' in df.columns:
         edad = st.selectbox("Age", df[' Edad'].tolist())
     else:
         st.error(f"Column 'Edad' not found. Available columns: {df.columns.tolist()}")
@@ -136,7 +136,7 @@ else:
     nC = st.number_input("Grade C blastocysts", min_value=0, step=1)
 
     # Calcular probabilidad
-    fila = df[df['Edad'] == edad].iloc[0]
+    fila = df[df[' Edad'] == edad].iloc[0]
     pA, pB, pC = fila['A'], fila['B'], fila['C']
     prob = 1 - (1 - pA)**nA * (1 - pB)**nB * (1 - pC)**nC
 
