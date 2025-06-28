@@ -151,4 +151,20 @@ else:
         unsafe_allow_html=True
     )
 
-
+    # Logout button
+    if st.button("Log out"):
+        st.logout()
+        st.session_state.logged_in = False
+        logout_url = (
+            "https://dev-47xxwxkuddgbl0fo.us.auth0.com/v2/logout?"
+            "client_id=mTQf6FD1dPJm8SVz7sVaFh7LRlnQWMrI&"
+            "returnTo=https://app-app0-app-hwq3xjpohg7cilzdu34ba8.streamlit.app"
+        )
+        components.html(
+            f"""
+            <script>
+                window.location.href = "{logout_url}";
+            </script>
+            """,
+            height=0,
+        )
