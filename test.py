@@ -160,7 +160,7 @@ st.markdown(
 
 # Login page
 if not st.session_state.logged_in:
-    st.title("Vitrification Viability via Osmotic Response Calculator")
+    st.title("At Least One Euploid Calculator Calculator")
     if st.button("Log in / Sign up"):
         st.login("auth0")
         if st.user and st.user.is_logged_in:
